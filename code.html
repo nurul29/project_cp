@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SUNDIGITAL — Arsitektur Laravel Breeze + Vue 3 (Inertia.js)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            teal: {
+              50: '#f0fdf9',
+              100: '#ccfbf1',
+              200: '#99f6e4',
+              500: '#14b8a6',
+              600: '#0d9488',
+              700: '#0c7774',
+              800: '#075f5d',
+              900: '#134e4a',
+            },
+            brand: {
+              ink: '#193b3a',
+              muted: '#667b79',
+              bg: '#f7faf8',
+              line: '#e4eae7',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    [x-cloak] { display: none !important; }
+  </style>
+</head>
+<body class="bg-[#f7faf8] text-[#193b3a] min-h-screen antialiased flex flex-col">
+
+  <!-- Top Framework Bar (Laravel Breeze + Vue Inertia indicator) -->
+  <header class="bg-white border-b border-[#e4eae7] sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="#" class="flex items-center gap-2.5 font-bold text-lg text-[#193b3a] tracking-tight">
+          <div class="w-9 h-9 rounded-xl bg-[#0c7774] text-white flex items-center justify-center font-black text-xl shadow-xs">
+            ✺
+          </div>
+          <div>
+            <div class="leading-none flex items-center gap-1.5">
+              <span>SUNDIGITAL</span>
+              <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold tracking-wide">Vue 3 + Inertia</span>
+            </div>
+            <small class="text-xs text-[#667b79] font-medium block mt-0.5">Ruang Belajar Digital SMP</small>
+          </div>
+        </a>
+      </div>
+
+      <!-- State & Mode Switcher (Breeze Multi-Role & Tech Spec Toggle) -->
+      <div class="flex items-center gap-3">
+        <!-- View Toggle: Student Dashboard, Teacher, Login/Breeze Auth, Component Spec -->
+        <div class="inline-flex p-1 bg-[#edf2ef] rounded-xl text-xs font-semibold text-[#526764]">
+          <button id="tab-student" onclick="switchView('student')" class="px-3 py-1.5 rounded-lg bg-white text-[#0c7774] shadow-xs transition-all">Siswa (Auth)</button>
+          <button id="tab-teacher" onclick="switchView('teacher')" class="px-3 py-1.5 rounded-lg hover:text-[#0c7774] transition-all">Guru (Auth)</button>
+          <button id="tab-auth" onclick="switchView('auth')" class="px-3 py-1.5 rounded-lg hover:text-[#0c7774] transition-all">Breeze Login</button>
+          <button id="tab-code" onclick="switchView('code')" class="px-3 py-1.5 rounded-lg hover:text-[#0c7774] transition-all">Arsitektur & Code</button>
+        </div>
+
+        <div class="hidden sm:flex items-center gap-2 pl-3 border-l border-[#e4eae7]">
+          <span class="text-xs text-[#667b79] font-medium">Laravel 11 • Breeze Vue</span>
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- VIEW 1: STUDENT DASHBOARD (AuthenticatedLayout.vue) -->
+  <main id="view-student" class="flex-1 flex overflow-hidden">
+    <!-- Authenticated Layout Sidebar Component: Sidebar.vue -->
+    <aside class="w-64 bg-white border-r border-[#e4eae7] p-5 hidden md:flex flex-col justify-between shrink-0">
+      <div class="space-y-6">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-[#92a19c] px-3">Menu Utama</span>
+          <nav class="mt-2 space-y-1">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#e7f6ef] text-[#0c7774] font-semibold text-sm">
+              <span class="text-lg leading-none">⌂</span>
+              <span>Beranda</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#526764] hover:bg-[#f5f8f6] font-medium text-sm transition">
+              <span class="text-lg leading-none">▦</span>
+              <span>Mata Pelajaran</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#526764] hover:bg-[#f5f8f6] font-medium text-sm transition">
+              <span class="text-lg leading-none">▣</span>
+              <span>Perpustakaan Digital</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#526764] hover:bg-[#f5f8f6] font-medium text-sm transition">
+              <span class="text-lg leading-none">▶</span>
+              <span>Video Pembelajaran</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#526764] hover:bg-[#f5f8f6] font-medium text-sm transition">
+              <span class="text-lg leading-none">▤</span>
+              <span>Lembar Kerja (LKPD)</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#526764] hover:bg-[#f5f8f6] font-medium text-sm transition">
+              <span class="text-lg leading-none">✦</span>
+              <span>Kuis & Gamifikasi</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#526764] hover:bg-[#f5f8f6] font-medium text-sm transition">
+              <span class="text-lg leading-none">▥</span>
+              <span>Buku Nilai</span>
+            </a>
+          </nav>
+        </div>
+
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-[#92a19c] px-3">Kelas Terdaftar</span>
+          <div class="mt-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/60 text-xs">
+            <div class="font-bold text-[#193b3a]">SMP Negeri 1 - Kelas VIII A</div>
+            <div class="text-[#667b79] mt-0.5">Tahun Ajaran 2025/2026</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Authenticated User Dropdown Trigger (Breeze Style) -->
+      <div class="border-t border-[#e4eae7] pt-4 mt-4">
+        <div class="flex items-center justify-between p-2 rounded-xl hover:bg-[#f5f8f6] transition cursor-pointer">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-10 h-10 rounded-xl bg-[#f3d4b6] text-[#704832] flex items-center justify-center font-bold text-sm shrink-0">
+              NA
+            </div>
+            <div class="truncate">
+              <div class="text-sm font-bold text-[#193b3a] leading-tight truncate">Nadia Aulia</div>
+              <div class="text-xs text-[#667b79] leading-tight">NIS: 2324.08.014</div>
+            </div>
+          </div>
+          <svg class="w-4 h-4 text-[#667b79]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Workspace Area: Inertia Page Component (Pages/Student/Dashboard.vue) -->
+    <div class="flex-1 overflow-y-auto">
+      <!-- Breadcrumb Bar & Header -->
+      <div class="bg-white border-b border-[#e4eae7] px-6 py-3.5 flex items-center justify-between">
+        <nav class="flex text-xs font-semibold text-[#667b79] gap-2 items-center">
+          <a href="#" class="hover:text-[#0c7774]">SUNDIGITAL</a>
+          <span>/</span>
+          <span class="text-[#193b3a]">Ruang Siswa</span>
+          <span>/</span>
+          <span class="text-[#0c7774]">Beranda Belajar</span>
+        </nav>
+        <div class="flex items-center gap-3">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#e6f3ed] text-[#276c60]">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Semester Ganjil Aktif
+          </span>
+        </div>
+      </div>
+
+      <div class="max-w-6xl mx-auto p-6 md:p-8 space-y-8">
+        <!-- Hero Banner Component -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0c7774] to-[#075f5d] text-white p-7 md:p-9 shadow-lg shadow-teal-900/10">
+          <div class="relative z-10 max-w-xl space-y-3">
+            <span class="inline-block text-[11px] font-extrabold uppercase tracking-widest bg-white/15 px-3 py-1 rounded-full text-teal-100">
+              Lanjutkan Belajar · Matematika
+            </span>
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight leading-tight">
+              Teorema Pythagoras & Segitiga Siku-siku
+            </h1>
+            <p class="text-teal-100 text-sm md:text-base leading-relaxed">
+              Pelajari konsep kuadrat sisi miring, pembuktian visual, dan selesaikan tantangan kuis interaktif hari ini.
+            </p>
+            <div class="pt-2 flex flex-wrap gap-3">
+              <button class="px-5 py-2.5 bg-white text-[#075f5d] font-bold text-sm rounded-xl hover:bg-teal-50 transition shadow-sm">
+                Buka Modul & Video →
+              </button>
+              <button class="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm rounded-xl transition">
+                Cek Lembar Kerja
+              </button>
+            </div>
+          </div>
+          <div class="absolute -right-10 -bottom-10 opacity-20 md:opacity-30 pointer-events-none select-none text-[180px]">
+            📐
+          </div>
+        </div>
+
+        <!-- Quick Summary & Progress Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Pending Activities -->
+          <div class="lg:col-span-2 bg-white rounded-2xl border border-[#e4eae7] p-6 shadow-xs space-y-4">
+            <div class="flex items-center justify-between">
+              <h2 class="text-base font-bold text-[#193b3a]">Tugas & Aktivitas Terdekat</h2>
+              <a href="#" class="text-xs font-bold text-[#0c7774] hover:underline">Lihat Semua (4) →</a>
+            </div>
+
+            <div class="divide-y divide-[#edf1ee]">
+              <div class="py-3.5 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5">
+                  <div class="w-11 h-11 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-xl shrink-0 font-bold">
+                    📝
+                  </div>
+                  <div>
+                    <h3 class="text-sm font-bold text-[#193b3a]">LKPD: Sistem Pencernaan Manusia</h3>
+                    <p class="text-xs text-[#667b79] mt-0.5">IPA • Batas waktu: Besok, 23:59 WIB</p>
+                  </div>
+                </div>
+                <button class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-[#e7f6ef] text-[#0c7774] hover:bg-[#d5eee2] transition">
+                  Kerjakan
+                </button>
+              </div>
+
+              <div class="py-3.5 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5">
+                  <div class="w-11 h-11 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center text-xl shrink-0 font-bold">
+                    🎯
+                  </div>
+                  <div>
+                    <h3 class="text-sm font-bold text-[#193b3a]">Kuis Cepat: Teorema Pythagoras</h3>
+                    <p class="text-xs text-[#667b79] mt-0.5">Matematika • 5 Soal Pilihan Ganda</p>
+                  </div>
+                </div>
+                <button class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-[#e7f6ef] text-[#0c7774] hover:bg-[#d5eee2] transition">
+                  Mulai Kuis
+                </button>
+              </div>
+
+              <div class="py-3.5 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5">
+                  <div class="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shrink-0 font-bold">
+                    🎬
+                  </div>
+                  <div>
+                    <h3 class="text-sm font-bold text-[#193b3a]">Video Bedah Teks Eksplanasi Fenomena Alam</h3>
+                    <p class="text-xs text-[#667b79] mt-0.5">Bahasa Indonesia • Durasi 12 Menit</p>
+                  </div>
+                </div>
+                <button class="px-3.5 py-1.5 text-xs font-bold rounded-lg bg-[#f0f4f2] text-[#48635e] hover:bg-slate-200 transition">
+                  Tonton
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress Widget -->
+          <div class="bg-white rounded-2xl border border-[#e4eae7] p-6 shadow-xs flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-bold text-[#193b3a]">Progres Belajar</h2>
+                <span class="text-xs font-semibold text-[#667b79]">Semester 1</span>
+              </div>
+              <div class="text-3xl font-extrabold text-[#193b3a] tracking-tight">
+                74<span class="text-lg font-bold text-[#667b79]">%</span>
+              </div>
+              <p class="text-xs text-[#667b79] mt-1">26 dari 35 capaian pembelajaran tuntas</p>
+
+              <div class="w-full bg-[#eaf0ed] h-2.5 rounded-full overflow-hidden mt-4">
+                <div class="bg-[#0c7774] h-full rounded-full w-[74%] transition-all duration-500"></div>
+              </div>
+
+              <div class="mt-6 space-y-2.5">
+                <div class="flex justify-between text-xs">
+                  <span class="text-[#667b79]">Matematika</span>
+                  <span class="font-bold text-[#193b3a]">85%</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                  <span class="text-[#667b79]">IPA Terpadu</span>
+                  <span class="font-bold text-[#193b3a]">70%</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                  <span class="text-[#667b79]">Bahasa Indonesia</span>
+                  <span class="font-bold text-[#193b3a]">90%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-[#e4eae7]">
+              <a href="#" class="block text-center text-xs font-bold text-[#0c7774] bg-[#e7f6ef] py-2 rounded-xl hover:bg-[#d5eee2] transition">
+                Unduh Rekap Portofolio (PDF)
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subject Modules Grid: Vue Component (SubjectGrid.vue) -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-[#193b3a]">Mata Pelajaran (Kurikulum Merdeka)</h2>
+              <p class="text-xs text-[#667b79]">Pilih mata pelajaran untuk mengakses modul, materi ajar, dan tugas.</p>
+            </div>
+            <div class="flex gap-2">
+              <span class="text-xs font-semibold bg-white border border-[#e4eae7] px-3 py-1.5 rounded-lg text-[#667b79]">11 Mata Pelajaran</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <!-- Subject Card Item -->
+            <div class="bg-white rounded-2xl border border-[#e4eae7] p-5 hover:border-teal-500 hover:shadow-md transition cursor-pointer group flex flex-col justify-between">
+              <div>
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-black text-base mb-3 group-hover:scale-105 transition">
+                  ∑
+                </div>
+                <h3 class="font-bold text-sm text-[#193b3a] group-hover:text-[#0c7774] transition">Matematika</h3>
+                <p class="text-xs text-[#667b79] mt-1">Aljabar, Geometri & Statistik</p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-[#0c7774]">
+                <span>8 Modul</span>
+                <span>Buka →</span>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-[#e4eae7] p-5 hover:border-teal-500 hover:shadow-md transition cursor-pointer group flex flex-col justify-between">
+              <div>
+                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center font-black text-base mb-3 group-hover:scale-105 transition">
+                  🔬
+                </div>
+                <h3 class="font-bold text-sm text-[#193b3a] group-hover:text-[#0c7774] transition">IPA</h3>
+                <p class="text-xs text-[#667b79] mt-1">Biologi, Fisika & Praktikum</p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-[#0c7774]">
+                <span>10 Modul</span>
+                <span>Buka →</span>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-[#e4eae7] p-5 hover:border-teal-500 hover:shadow-md transition cursor-pointer group flex flex-col justify-between">
+              <div>
+                <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-700 flex items-center justify-center font-black text-base mb-3 group-hover:scale-105 transition">
+                  ✎
+                </div>
+                <h3 class="font-bold text-sm text-[#193b3a] group-hover:text-[#0c7774] transition">Bahasa Indonesia</h3>
+                <p class="text-xs text-[#667b79] mt-1">Literasi & Teks Fiksi/Nonfiksi</p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-[#0c7774]">
+                <span>6 Modul</span>
+                <span>Buka →</span>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-[#e4eae7] p-5 hover:border-teal-500 hover:shadow-md transition cursor-pointer group flex flex-col justify-between">
+              <div>
+                <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center font-black text-base mb-3 group-hover:scale-105 transition">
+                  Aa
+                </div>
+                <h3 class="font-bold text-sm text-[#193b3a] group-hover:text-[#0c7774] transition">Bahasa Inggris</h3>
+                <p class="text-xs text-[#667b79] mt-1">Speaking, Listening & Vocab</p>
+              </div>
+              <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-[#0c7774]">
+                <span>7 Modul</span>
+                <span>Buka →</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- VIEW 2: TEACHER DASHBOARD (Pages/Teacher/Dashboard.vue) -->
+  <main id="view-teacher" class="flex-1 hidden overflow-hidden">
+    <aside class="w-64 bg-white border-r border-[#e4eae7] p-5 hidden md:flex flex-col justify-between shrink-0">
+      <div class="space-y-6">
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-[#92a19c] px-3">Ruang Guru</span>
+          <nav class="mt-2 space-y-1">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#e7f6ef] text-[#0c7774] font-semibold text-sm">
+              <span class="text-lg leading-none">⌂</span>
+              <span>Beranda Guru</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#526764] hover:bg-[#f5f8f6] font-medium text-sm transition">
+              <span class="text-lg leading-none">▣</span>
+              <span>Kelola Materi Ajar</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#526764] hover:bg-[#f5f8f6] font-medium text-sm transition">
+              <span class="text-lg leading-none">▤</span>
+              <span>Bank Soal & Kuis</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#526764] hover:bg-[#f5f8f6] font-medium text-sm transition">
+              <span class="text-lg leading-none">◫</span>
+              <span>Pengumpulan Tugas (12 Baru)</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#526764] hover:bg-[#f5f8f6] font-medium text-sm transition">
+              <span class="text-lg leading-none">▥</span>
+              <span>Rekap Nilai Siswa</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="border-t border-[#e4eae7] pt-4 mt-4">
+        <div class="flex items-center gap-3 p-2 rounded-xl">
+          <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-sm">
+            PA
+          </div>
+          <div class="truncate">
+            <div class="text-sm font-bold text-[#193b3a]">Pak Arif, S.Pd.</div>
+            <div class="text-xs text-[#667b79]">Guru Matematika VIII A-C</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="flex-1 overflow-y-auto p-6 md:p-8 space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-extrabold text-[#193b3a]">Halo, Pak Arif! 👋</h1>
+          <p class="text-sm text-[#667b79]">Kelola pembelajaran Matematika Kelas VIII SMP SUNDIGITAL.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="px-4 py-2 bg-[#0c7774] text-white font-bold text-xs rounded-xl shadow-xs hover:bg-[#075f5d] transition">
+            + Unggah Modul Baru
+          </button>
+          <button class="px-4 py-2 bg-white border border-[#e4eae7] text-[#193b3a] font-bold text-xs rounded-xl hover:bg-slate-50 transition">
+            + Buat Kuis Interaktif
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        <div class="bg-white p-5 rounded-2xl border border-[#e4eae7]">
+          <span class="text-xs font-semibold text-[#667b79]">Total Materi Aktif</span>
+          <div class="text-2xl font-black text-[#193b3a] mt-1">16 Modul</div>
+          <span class="text-[11px] text-teal-700 font-semibold mt-1 block">4 Video pembelajaran tersemat</span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-[#e4eae7]">
+          <span class="text-xs font-semibold text-[#667b79]">Pengumpulan Menunggu Nilai</span>
+          <div class="text-2xl font-black text-amber-600 mt-1">12 Siswa</div>
+          <span class="text-[11px] text-[#667b79] font-medium mt-1 block">Tugas Teorema Pythagoras</span>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-[#e4eae7]">
+          <span class="text-xs font-semibold text-[#667b79]">Rata-rata Nilai Kelas</span>
+          <div class="text-2xl font-black text-emerald-600 mt-1">86.4</div>
+          <span class="text-[11px] text-emerald-700 font-semibold mt-1 block">+4.2% dari asesmen awal</span>
+        </div>
+      </div>
+
+      <!-- Assignment Review Table -->
+      <div class="bg-white rounded-2xl border border-[#e4eae7] overflow-hidden">
+        <div class="p-5 border-b border-[#e4eae7] flex items-center justify-between">
+          <h2 class="font-bold text-sm text-[#193b3a]">Pengumpulan Lembar Kerja Siswa Terbaru</h2>
+          <span class="text-xs text-[#667b79]">Kelas VIII A</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-[#f8faf8] text-[#667b79] border-b border-[#e4eae7]">
+              <tr>
+                <th class="p-3.5 pl-5">Nama Siswa</th>
+                <th class="p-3.5">Judul Tugas</th>
+                <th class="p-3.5">Waktu Kirim</th>
+                <th class="p-3.5">Status</th>
+                <th class="p-3.5 pr-5 text-right">Aksi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#edf1ee]">
+              <tr>
+                <td class="p-3.5 pl-5 font-bold text-[#193b3a]">Nadia Aulia</td>
+                <td class="p-3.5 text-[#526764]">Latihan Segitiga Siku-siku #1</td>
+                <td class="p-3.5 text-[#667b79]">Hari ini, 14:20</td>
+                <td class="p-3.5"><span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-semibold text-[10px]">Perlu Dinilai</span></td>
+                <td class="p-3.5 pr-5 text-right">
+                  <button class="font-bold text-[#0c7774] hover:underline">Periksa & Nilai →</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="p-3.5 pl-5 font-bold text-[#193b3a]">Rafi Fadilah</td>
+                <td class="p-3.5 text-[#526764]">Latihan Segitiga Siku-siku #1</td>
+                <td class="p-3.5 text-[#667b79]">Hari ini, 13:05</td>
+                <td class="p-3.5"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold text-[10px]">Dinilai (92)</span></td>
+                <td class="p-3.5 pr-5 text-right">
+                  <button class="font-semibold text-[#667b79] hover:underline">Lihat Hasil</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- VIEW 3: BREEZE AUTH LOGIN (Pages/Auth/Login.vue) -->
+  <main id="view-auth" class="flex-1 hidden bg-gradient-to-br from-[#edf8f2] via-[#fbfaf5] to-[#f6faf8] py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md mx-auto space-y-6">
+      <div class="text-center space-y-2">
+        <div class="inline-flex w-12 h-12 rounded-2xl bg-[#0c7774] text-white items-center justify-center font-black text-2xl shadow-md">
+          ✺
+        </div>
+        <h2 class="text-2xl font-black tracking-tight text-[#193b3a]">SUNDIGITAL LMS</h2>
+        <p class="text-xs text-[#667b79]">Laravel Breeze Authentication Stack (Vue 3 + Inertia)</p>
+      </div>
+
+      <!-- Guest Card Container (Laravel Breeze GuestLayout) -->
+      <div class="bg-white p-8 rounded-3xl border border-[#e4eae7] shadow-xl shadow-teal-900/5 space-y-6">
+        <!-- Role selector tabs -->
+        <div class="grid grid-cols-3 gap-1.5 p-1 bg-[#f2f6f3] rounded-xl text-xs font-bold text-[#667b79]">
+          <button type="button" class="py-2 rounded-lg bg-white text-[#0c7774] shadow-xs">Siswa</button>
+          <button type="button" class="py-2 rounded-lg hover:text-[#0c7774]">Guru</button>
+          <button type="button" class="py-2 rounded-lg hover:text-[#0c7774]">Admin</button>
+        </div>
+
+        <form onsubmit="event.preventDefault(); switchView('student');" class="space-y-4">
+          <!-- Breeze TextInput Component Pattern -->
+          <div class="space-y-1.5">
+            <label class="block text-xs font-bold text-[#193b3a]" for="email">NIS / Akun Belajar.id</label>
+            <input id="email" type="text" value="siswa.081@sundigital.sch.id" required
+              class="w-full px-3.5 py-2.5 rounded-xl border border-[#dce6e2] focus:border-[#0c7774] focus:ring-2 focus:ring-[#0c7774]/20 text-sm outline-none transition text-[#193b3a]">
+          </div>
+
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between">
+              <label class="block text-xs font-bold text-[#193b3a]" for="password">Kata Sandi</label>
+              <a href="#" class="text-[11px] font-semibold text-[#0c7774] hover:underline">Lupa sandi?</a>
+            </div>
+            <input id="password" type="password" value="demo12345" required
+              class="w-full px-3.5 py-2.5 rounded-xl border border-[#dce6e2] focus:border-[#0c7774] focus:ring-2 focus:ring-[#0c7774]/20 text-sm outline-none transition text-[#193b3a]">
+          </div>
+
+          <!-- Remember me checkbox (Breeze Checkbox Component) -->
+          <div class="flex items-center gap-2">
+            <input id="remember_me" type="checkbox" checked class="w-4 h-4 rounded text-[#0c7774] border-gray-300 focus:ring-[#0c7774]">
+            <label for="remember_me" class="text-xs text-[#667b79] select-none">Ingat perangkat ini</label>
+          </div>
+
+          <!-- PrimaryButton Component -->
+          <button type="submit" class="w-full py-3 bg-[#0c7774] hover:bg-[#075f5d] text-white font-bold text-sm rounded-xl transition shadow-sm">
+            Masuk ke Ruang Belajar →
+          </button>
+        </form>
+
+        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-[11px] text-emerald-800 leading-relaxed flex items-start gap-2">
+          <span>ℹ️</span>
+          <span>Form ini siap dipetakan ke <code>useForm()</code> dari Inertia.js (<code>POST route('login')</code>).</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- VIEW 4: LARAVEL BREEZE + VUE 3 ARCHITECTURE SPEC & CODE SAMPLES -->
+  <main id="view-code" class="flex-1 hidden overflow-y-auto p-6 md:p-10 bg-[#f7faf8]">
+    <div class="max-w-5xl mx-auto space-y-8">
+      <div>
+        <span class="text-xs font-extrabold text-[#0c7774] uppercase tracking-widest">Developer Blueprint</span>
+        <h1 class="text-2xl md:text-3xl font-black text-[#193b3a] mt-1">Implementasi Laravel Breeze + Vue.js (Inertia)</h1>
+        <p class="text-sm text-[#667b79] mt-1">Struktur folder rekomendasi, controller, model, dan contoh komponen Vue 3 Script Setup.</p>
+      </div>
+
+      <!-- Grid Cards of Architecture -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Directory Structure -->
+        <div class="bg-white rounded-2xl border border-[#e4eae7] p-6 space-y-3">
+          <div class="flex items-center gap-2 text-sm font-bold text-[#193b3a]">
+            <span>📁</span>
+            <span>Rekomendasi Struktur Folder (resources/js)</span>
+          </div>
+          <pre class="bg-slate-900 text-slate-100 text-xs p-4 rounded-xl font-mono leading-relaxed overflow-x-auto"><code>resources/js/
+├── Components/
+│   ├── ApplicationLogo.vue
+│   ├── PrimaryButton.vue
+│   ├── SubjectCard.vue
+│   ├── AssignmentLine.vue
+│   └── ProgressTracker.vue
+├── Layouts/
+│   ├── AuthenticatedLayout.vue  // Memuat sidebar & topbar
+│   └── GuestLayout.vue          // Layout login/register
+├── Pages/
+│   ├── Auth/
+│   │   ├── Login.vue            // Custom Breeze login
+│   │   └── ForgotPassword.vue
+│   ├── Student/
+│   │   ├── Dashboard.vue        // Beranda siswa
+│   │   ├── Subjects/Index.vue
+│   │   └── Worksheets/Show.vue
+│   └── Teacher/
+│       ├── Dashboard.vue        // Beranda guru
+│       └── Gradebook/Index.vue
+└── app.js</code></pre>
+        </div>
+
+        <!-- Inertia Vue 3 Sample Component -->
+        <div class="bg-white rounded-2xl border border-[#e4eae7] p-6 space-y-3">
+          <div class="flex items-center gap-2 text-sm font-bold text-[#193b3a]">
+            <span>⚡</span>
+            <span>Contoh Vue 3 Script Setup (Pages/Student/Dashboard.vue)</span>
+          </div>
+          <pre class="bg-slate-900 text-slate-100 text-xs p-4 rounded-xl font-mono leading-relaxed overflow-x-auto"><code>&lt;script setup&gt;
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import SubjectCard from '@/Components/SubjectCard.vue';
+import { Head, Link } from '@inertiajs/vue3';
+
+defineProps({
+    student: Object,
+    subjects: Array,
+    upcomingTasks: Array,
+    overallProgress: Number,
+});
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;Head title="Beranda Belajar Siswa" /&gt;
+  &lt;AuthenticatedLayout&gt;
+    &lt;!-- Hero Section with props --&gt;
+    &lt;div class="grid grid-cols-4 gap-4"&gt;
+      &lt;SubjectCard 
+        v-for="item in subjects" 
+        :key="item.id" 
+        :subject="item" 
+      /&gt;
+    &lt;/div&gt;
+  &lt;/AuthenticatedLayout&gt;
+&lt;/template&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Backend Controller Mapping -->
+      <div class="bg-white rounded-2xl border border-[#e4eae7] p-6 space-y-4">
+        <h3 class="text-sm font-bold text-[#193b3a] flex items-center gap-2">
+          <span>🐘</span>
+          <span>Laravel Controller & Routes Mapping (routes/web.php)</span>
+        </h3>
+        <pre class="bg-slate-900 text-slate-100 text-xs p-4 rounded-xl font-mono leading-relaxed overflow-x-auto"><code>use App\Http\Controllers\Student\DashboardController;
+use App\Http\Controllers\Teacher\TeacherDashboardController;
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Route Khusus Siswa
+    Route::middleware('role:siswa')->prefix('siswa')->name('siswa.')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/mapel/{subject:slug}', [SubjectController::class, 'show'])->name('subjects.show');
+        Route::post('/tugas/{assignment}/submit', [AssignmentController::class, 'store'])->name('assignment.submit');
+    });
+
+    // Route Khusus Guru
+    Route::middleware('role:guru')->prefix('guru')->name('guru.')->group(function () {
+        Route::get('/dashboard', [TeacherDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/nilai', [GradebookController::class, 'index'])->name('gradebook.index');
+    });
+});</code></pre>
+      </div>
+
+      <!-- Step by step setup guide -->
+      <div class="bg-emerald-50 border border-emerald-200/80 rounded-2xl p-6 text-xs text-emerald-950 space-y-3">
+        <h3 class="font-bold text-sm text-emerald-900 flex items-center gap-2">
+          <span>🚀</span>
+          <span>Langkah Cepat Instalasi di Proyek Baru:</span>
+        </h3>
+        <ol class="list-decimal list-inside space-y-1.5 font-medium">
+          <li>Install Laravel: <code>laravel new sundigital --git</code></li>
+          <li>Install Breeze dengan Vue: <code>php artisan breeze:install vue --pest --ssr</code></li>
+          <li>Migrasi database: <code>php artisan migrate</code></li>
+          <li>Jalankan frontend compiler: <code>npm install &amp;&amp; npm run dev</code></li>
+          <li>Gunakan komponen Tailwind yang telah disesuaikan dengan skema warna Sundigital di atas!</li>
+        </ol>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function switchView(viewName) {
+      const views = ['student', 'teacher', 'auth', 'code'];
+      views.forEach(v => {
+        const el = document.getElementById('view-' + v);
+        const tab = document.getElementById('tab-' + v);
+        if (v === viewName) {
+          el.classList.remove('hidden');
+          tab.classList.add('bg-white', 'text-[#0c7774]', 'shadow-xs');
+          tab.classList.remove('hover:text-[#0c7774]');
+        } else {
+          el.classList.add('hidden');
+          tab.classList.remove('bg-white', 'text-[#0c7774]', 'shadow-xs');
+          tab.classList.add('hover:text-[#0c7774]');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
